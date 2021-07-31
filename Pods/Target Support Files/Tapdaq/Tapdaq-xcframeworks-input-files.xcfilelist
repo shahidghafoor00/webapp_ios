@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Tapdaq/Tapdaq-xcframeworks.sh
+${PODS_ROOT}/Tapdaq/adapters/AdMobAdapter.xcframework
+${PODS_ROOT}/Tapdaq/adapters/FANAdapter.xcframework
+${PODS_ROOT}/Tapdaq/Tapdaq.xcframework

@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import Tapdaq
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +16,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        let properties = TDProperties()
+        properties.privacySettings.userSubjectToGdpr = TDPrivacyStatus.yes  //GDPR declare if user is in EU
+        properties.privacySettings.gdprConsentGiven = TDPrivacyStatus.yes //GDPR consent must be obtained from the user
+        properties.privacySettings.ageRestrictedUser = TDPrivacyStatus.yes //Is user subject to COPPA or GDPR age restrictions
+
+        Tapdaq.sharedSession().setApplicationId("<APP_ID>", clientKey: "<CLIENT_KEY>", properties: properties)
+
+        
         return true
     }
 
