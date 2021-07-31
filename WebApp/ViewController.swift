@@ -49,7 +49,7 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
     }
     
     func didLoad(_ adRequest: TDInterstitialAdRequest) {
-        if adRequest.placement.tag == "my_interstitial_tag" {
+        if adRequest.placement.tag == "ca-app-pub-3940256099942544/1033173712" {
             if adRequest.placement.adUnit == .unitStaticInterstitial {
                 adRequest.display()
             }
@@ -58,8 +58,12 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
     
     
     func loadBannerAd() {
-        Tapdaq.sharedSession()?.loadBanner(forPlacementTag: "my_banner_tag", with: .standard, delegate: self)
+        Tapdaq.sharedSession()?.loadBanner(forPlacementTag: "ca-app-pub-3940256099942544/6300978111", with: .standard, delegate: self)
         
+    }
+    
+    func didLoad(_ adRequest: TDBannerAdRequest){
+        loadBannerAd()
     }
     
     func webView(_ webView: WKWebView,

@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         properties.privacySettings.gdprConsentGiven = TDPrivacyStatus.yes //GDPR consent must be obtained from the user
         properties.privacySettings.ageRestrictedUser = TDPrivacyStatus.yes //Is user subject to COPPA or GDPR age restrictions
 
-        Tapdaq.sharedSession().setApplicationId("<APP_ID>", clientKey: "<CLIENT_KEY>", properties: properties)
+        Tapdaq.sharedSession().setApplicationId("6105be4008fe6c2d735d692c", clientKey: "fdc91ec4-f65a-437d-a344-69a74773f3ba", properties: properties)
 
         
         return true
