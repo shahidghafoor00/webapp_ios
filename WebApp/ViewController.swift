@@ -17,15 +17,24 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
     
     
     var bannerView: UIView!
+    var placementTag: String = TDPTagDefault
+    var selectedBannerSize: TDMBannerSize = .standard;
     
+    var canShowFullScreenAds: Bool = true
+    
+    @IBOutlet weak var viewAdHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var viewBannerContainer: UIView!
     @IBOutlet weak var webView: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         Tapdaq.sharedSession().delegate = self
         Tapdaq.sharedSession().properties.autoReloadAds = true
+        Tapdaq.sharedSession()?.presentDebugViewController()
         
+        self.setupTapdaq()
         if isInternetAvailable() {
             // webview navigation
             webView.navigationDelegate = self
@@ -42,28 +51,29 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
             showAlert()
         }
         
+        let timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(activeFullScreenAds), userInfo: nil, repeats: true)
     }
     
-    func didLoadConfig() {
-        Tapdaq.sharedSession().loadInterstitial(forPlacementTag: "my_interstitial_tag", delegate: self)
-    }
-    
-    func didLoad(_ adRequest: TDInterstitialAdRequest) {
-        if adRequest.placement.tag == "ca-app-pub-3940256099942544/1033173712" {
-            if adRequest.placement.adUnit == .unitStaticInterstitial {
-                adRequest.display()
-            }
+    func setupTapdaq() {
+        var properties = Tapdaq.sharedSession()?.properties
+        if properties == nil {
+            properties = TDProperties.default()
         }
+        TDLogger.setLogLevel(.debug)
+        Tapdaq.sharedSession()?.delegate = self
+        Tapdaq.sharedSession()?.setApplicationId(kAppId, clientKey: kClientKey, properties: properties)
     }
     
-    
-    func loadBannerAd() {
-        Tapdaq.sharedSession()?.loadBanner(forPlacementTag: "ca-app-pub-3940256099942544/6300978111", with: .standard, delegate: self)
-        
-    }
-    
-    func didLoad(_ adRequest: TDBannerAdRequest){
-        loadBannerAd()
+    func show(adView: UIView?) {
+        guard let adView = adView else { return }
+        viewBannerContainer.addSubview(adView)
+        adView.translatesAutoresizingMaskIntoConstraints = false
+        viewAdHeightConstraint.constant = adView.frame.height == 0 ? 250 : adView.frame.height
+        let views = [ "adView" : adView ]
+        let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[adView]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: views)
+        let horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[adView]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: views)
+        viewBannerContainer.addConstraints(verticalConstraints)
+        viewBannerContainer.addConstraints(horizontalConstraints)
     }
     
     func webView(_ webView: WKWebView,
@@ -125,6 +135,64 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
             let action = UIAlertAction(title: "Dismiss", style: .default, handler: nil)
             alert.addAction(action)
             present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func didLoadConfig() {
+        print("Did load config")
+        
+        let isLoadEnabled = Tapdaq.sharedSession().isInitialised()
+        if isLoadEnabled {
+            Tapdaq.sharedSession()?.loadBanner(forPlacementTag: placementTag, with: .standard, delegate: self)
+            Tapdaq.sharedSession()?.loadVideo(forPlacementTag: placementTag, delegate: self)
+        }
+        
+    }
+    
+    func adRequest(_ adRequest: TDAdRequest, didFailToLoadWithError error: TDError?) {
+        print(error?.localizedDescription)
+    }
+
+    func didRefreshBanner(for adRequest: TDBannerAdRequest) {
+        
+    }
+    
+    func didFailToRefreshBanner(for adRequest: TDBannerAdRequest, withError: TDError?) {
+        print(withError?.localizedDescription ?? "")
+    }
+
+    
+    func didFailToLoadConfigWithError(_ error: TDError!) {
+        print("Did fail to load config with error: %@", error.localizedDescription)
+        
+    }
+    
+    func didClick(_ adRequest: TDAdRequest) {
+        print("Did click ad unit - %@ tag - %@", NSStringFromAdUnit(adRequest.placement.adUnit), adRequest.placement.tag)
+    }
+    
+    func didLoad(_ adRequest: TDInterstitialAdRequest) {
+        if canShowFullScreenAds {
+            self.showFullScreenAd()
+        }
+    }
+    
+    func didLoad(_ adRequest: TDBannerAdRequest){
+        bannerView = adRequest.bannerView()
+        show(adView: self.bannerView)
+    }
+    
+    @objc func activeFullScreenAds() {
+        self.canShowFullScreenAds = true
+        if ((Tapdaq.sharedSession()?.isInterstitialReady(forPlacementTag: self.placementTag)) != nil) {
+            self.showFullScreenAd()
+        }
+    }
+    
+    func showFullScreenAd() {
+        if self.canShowFullScreenAds {
+            self.canShowFullScreenAds = false
+            Tapdaq.sharedSession()?.showVideo(forPlacementTag: placementTag, delegate: self)
         }
     }
 }

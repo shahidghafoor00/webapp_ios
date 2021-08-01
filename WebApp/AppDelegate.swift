@@ -8,6 +8,9 @@
 import UIKit
 import Tapdaq
 
+let kAppId = "610670b008fe6c2d735d692f"
+let kClientKey = "c58275b0-b461-46a8-b3ae-09e83a67efe3"
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,8 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         properties.privacySettings.gdprConsentGiven = TDPrivacyStatus.yes //GDPR consent must be obtained from the user
         properties.privacySettings.ageRestrictedUser = TDPrivacyStatus.yes //Is user subject to COPPA or GDPR age restrictions
 
-        Tapdaq.sharedSession().setApplicationId("6105be4008fe6c2d735d692c", clientKey: "fdc91ec4-f65a-437d-a344-69a74773f3ba", properties: properties)
-
+        //Tapdaq.sharedSession().setApplicationId("6105be4008fe6c2d735d692c", clientKey: "fdc91ec4-f65a-437d-a344-69a74773f3ba", properties: properties)
+        Tapdaq.sharedSession().setApplicationId(kAppId, clientKey: kClientKey, properties: properties)
         
         return true
     }
