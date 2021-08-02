@@ -10,7 +10,8 @@ import Tapdaq
 
 let kAppId = "610670b008fe6c2d735d692f"
 let kClientKey = "c58275b0-b461-46a8-b3ae-09e83a67efe3"
-
+//let kAppId = "6106c07308fe6c2d735d6934"
+//let kClientKey = "6ed0d95a-f18c-441a-a9d0-617db5a8fd86"
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

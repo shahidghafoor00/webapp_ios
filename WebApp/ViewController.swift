@@ -144,7 +144,7 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
         let isLoadEnabled = Tapdaq.sharedSession().isInitialised()
         if isLoadEnabled {
             Tapdaq.sharedSession()?.loadBanner(forPlacementTag: placementTag, with: .standard, delegate: self)
-            Tapdaq.sharedSession()?.loadVideo(forPlacementTag: placementTag, delegate: self)
+            Tapdaq.sharedSession()?.loadInterstitial(forPlacementTag: placementTag, delegate: self)// loadVideo(forPlacementTag: placementTag, delegate: self)
         }
         
     }
@@ -184,7 +184,10 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
     
     @objc func activeFullScreenAds() {
         self.canShowFullScreenAds = true
-        if ((Tapdaq.sharedSession()?.isInterstitialReady(forPlacementTag: self.placementTag)) != nil) {
+        
+        let isReady = Tapdaq.sharedSession().isInterstitialReady(forPlacementTag: placementTag)
+        
+        if isReady {
             self.showFullScreenAd()
         }
     }
@@ -192,7 +195,7 @@ class ViewController: UIViewController, WKUIDelegate ,WKNavigationDelegate, Tapd
     func showFullScreenAd() {
         if self.canShowFullScreenAds {
             self.canShowFullScreenAds = false
-            Tapdaq.sharedSession()?.showVideo(forPlacementTag: placementTag, delegate: self)
+            Tapdaq.sharedSession()?.showInterstitial(forPlacementTag: placementTag, delegate: self)
         }
     }
 }
